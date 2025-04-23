@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ZixunshiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.username as username
+        ,a.password as password
+        ,a.zixunshi_name as zixunshiName
+        ,a.zixunshi_phone as zixunshiPhone
+        ,a.zixunshi_id_number as zixunshiIdNumber
+        ,a.sex_types as sexTypes
+        ,a.zixunshi_email as zixunshiEmail
+        ,a.zixunshi_photo as zixunshiPhoto
+        ,a.zixunshi_congye as zixunshiCongye
+        ,a.zixunshi_shanchang as zixunshiShanchang
+        ,a.zixunshi_content as zixunshiContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ZixunshiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM zixunshi  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.username != '' and params.username != null and params.username != 'null' ">
+                and a.username like CONCAT('%',#{params.username},'%')
+            </if>
+            <if test=" params.password != '' and params.password != null and params.password != 'null' ">
+                and a.password like CONCAT('%',#{params.password},'%')
+            </if>
+            <if test=" params.zixunshiName != '' and params.zixunshiName != null and params.zixunshiName != 'null' ">
+                and a.zixunshi_name like CONCAT('%',#{params.zixunshiName},'%')
+            </if>
+            <if test=" params.zixunshiPhone != '' and params.zixunshiPhone != null and params.zixunshiPhone != 'null' ">
+                and a.zixunshi_phone like CONCAT('%',#{params.zixunshiPhone},'%')
+            </if>
+            <if test=" params.zixunshiIdNumber != '' and params.zixunshiIdNumber != null and params.zixunshiIdNumber != 'null' ">
+                and a.zixunshi_id_number like CONCAT('%',#{params.zixunshiIdNumber},'%')
+            </if>
+            <if test="params.sexTypes != null and params.sexTypes != ''">
+                and a.sex_types = #{params.sexTypes}
+            </if>
+            <if test=" params.zixunshiEmail != '' and params.zixunshiEmail != null and params.zixunshiEmail != 'null' ">
+                and a.zixunshi_email like CONCAT('%',#{params.zixunshiEmail},'%')
+            </if>
+            <if test=" params.zixunshiCongye != '' and params.zixunshiCongye != null and params.zixunshiCongye != 'null' ">
+                and a.zixunshi_congye like CONCAT('%',#{params.zixunshiCongye},'%')
+            </if>
+            <if test=" params.zixunshiShanchang != '' and params.zixunshiShanchang != null and params.zixunshiShanchang != 'null' ">
+                and a.zixunshi_shanchang like CONCAT('%',#{params.zixunshiShanchang},'%')
+            </if>
+            <if test=" params.zixunshiContent != '' and params.zixunshiContent != null and params.zixunshiContent != 'null' ">
+                and a.zixunshi_content like CONCAT('%',#{params.zixunshiContent},'%')
+            </if>
+
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>

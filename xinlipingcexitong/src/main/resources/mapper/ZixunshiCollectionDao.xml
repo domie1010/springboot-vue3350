@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ZixunshiCollectionDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.zixunshi_id as zixunshiId
+        ,a.yonghu_id as yonghuId
+        ,a.zixunshi_collection_types as zixunshiCollectionTypes
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ZixunshiCollectionView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.yonghu_email as yonghuEmail
+        ,zixunshi.zixunshi_name as zixunshiName
+        ,zixunshi.zixunshi_phone as zixunshiPhone
+        ,zixunshi.zixunshi_id_number as zixunshiIdNumber
+        ,zixunshi.zixunshi_email as zixunshiEmail
+        ,zixunshi.zixunshi_photo as zixunshiPhoto
+        ,zixunshi.zixunshi_congye as zixunshiCongye
+        ,zixunshi.zixunshi_shanchang as zixunshiShanchang
+        ,zixunshi.zixunshi_content as zixunshiContent
+
+        FROM zixunshi_collection  a
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+        left JOIN zixunshi zixunshi ON a.zixunshi_id = zixunshi.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.zixunshiId != null and params.zixunshiId != ''">
+                and (
+                    a.zixunshi_id = #{params.zixunshiId}
+                )
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and (
+                    a.yonghu_id = #{params.yonghuId}
+                )
+            </if>
+            <if test="params.zixunshiCollectionTypes != null and params.zixunshiCollectionTypes != ''">
+                and a.zixunshi_collection_types = #{params.zixunshiCollectionTypes}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+                <!-- 判断用户的id不为空 -->
+            <if test=" params.yonghuIdNotNull != '' and params.yonghuIdNotNull != null and params.yonghuIdNotNull != 'null' ">
+                and a.yonghu_id IS NOT NULL
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+                <!-- 判断咨询师的id不为空 -->
+            <if test=" params.zixunshiIdNotNull != '' and params.zixunshiIdNotNull != null and params.zixunshiIdNotNull != 'null' ">
+                and a.zixunshi_id IS NOT NULL
+            </if>
+            <if test=" params.zixunshiName != '' and params.zixunshiName != null and params.zixunshiName != 'null' ">
+                and zixunshi.zixunshi_name like CONCAT('%',#{params.zixunshiName},'%')
+            </if>
+            <if test=" params.zixunshiPhone != '' and params.zixunshiPhone != null and params.zixunshiPhone != 'null' ">
+                and zixunshi.zixunshi_phone like CONCAT('%',#{params.zixunshiPhone},'%')
+            </if>
+            <if test=" params.zixunshiIdNumber != '' and params.zixunshiIdNumber != null and params.zixunshiIdNumber != 'null' ">
+                and zixunshi.zixunshi_id_number like CONCAT('%',#{params.zixunshiIdNumber},'%')
+            </if>
+            <if test=" params.zixunshiEmail != '' and params.zixunshiEmail != null and params.zixunshiEmail != 'null' ">
+                and zixunshi.zixunshi_email like CONCAT('%',#{params.zixunshiEmail},'%')
+            </if>
+            <if test=" params.zixunshiCongye != '' and params.zixunshiCongye != null and params.zixunshiCongye != 'null' ">
+                and zixunshi.zixunshi_congye like CONCAT('%',#{params.zixunshiCongye},'%')
+            </if>
+            <if test=" params.zixunshiShanchang != '' and params.zixunshiShanchang != null and params.zixunshiShanchang != 'null' ">
+                and zixunshi.zixunshi_shanchang like CONCAT('%',#{params.zixunshiShanchang},'%')
+            </if>
+            <if test=" params.zixunshiContent != '' and params.zixunshiContent != null and params.zixunshiContent != 'null' ">
+                and zixunshi.zixunshi_content like CONCAT('%',#{params.zixunshiContent},'%')
+            </if>
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>
